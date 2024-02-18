@@ -1,0 +1,30 @@
+div {
+  color: white;
+}
+
+.wallet-row {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(60, 95, 161);
+  padding: 10px;
+  width: 300px;
+  margin: auto;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  align-items: center;
+}
+
+.currency {
+  font-size: 18px;
+  font-weight: bold; 
+  margin-bottom: 5px; 
+}
+
+.info {
+  color: lightgray;
+  margin-bottom: 5px;
+}
+
+.usd-value {
+  font-size: 20px;
+}
