@@ -27,13 +27,14 @@ const SwapInterface: React.FC<SwapInterfaceProps> = () => {
   const [selectedPay, setSelectedPay] = useState<boolean>(true);
   const [showAlert, setShowAlert] = useState<boolean>(false);
 
-  useEffect(() => {
-    fetchPrice(payCurrency);
-  }, [payCurrency]);
+  const priceFormatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  });
 
   useEffect(() => {
-    fetchPrice(receiveCurrency);
-  }, [receiveCurrency]);
+    fetchPrice();
+  }, [payCurrency, receiveCurrency]);
 
   useEffect(() => {
     if (payAmount !== undefined && payAmount === 0) {
@@ -42,7 +43,6 @@ const SwapInterface: React.FC<SwapInterfaceProps> = () => {
       setReceiveCurrencyPriceTotal(0);
     }
     if (payAmount !== undefined && payAmount !== 0 && payCurrencyPrice !== 0 && receiveCurrencyPrice !== 0) {
-      console.log("hello")
       setPayCurrencyPriceTotal(roundPrice((payAmount * payCurrencyPrice)));
       setReceiveAmount(roundPrice((payAmount * payCurrencyPrice) / receiveCurrencyPrice));
       if (receiveAmount !== undefined && receiveAmount !== 0) {
@@ -55,11 +55,10 @@ const SwapInterface: React.FC<SwapInterfaceProps> = () => {
     return Number((Math.round((num) * 100) / 100).toFixed(2));
   }
 
-  async function fetchPrice(currency: Currency) {
+  async function fetchPrice() {
     try {
       if (selectedPay) {
         const data = await getCurrencyPrice(payCurrency);
-        console.log(data);
         setPayCurrencyPrice(roundPrice(data.price));
       } else if (!selectedPay) {
         const data = await getCurrencyPrice(receiveCurrency);
@@ -93,7 +92,6 @@ const SwapInterface: React.FC<SwapInterfaceProps> = () => {
   }
 
   function inputValidation(event: React.KeyboardEvent<HTMLInputElement>): void {
-    console.log(event.key);
     if (!/\d/.test(event.key)) {
       event.preventDefault();
     }
@@ -140,7 +138,7 @@ const SwapInterface: React.FC<SwapInterfaceProps> = () => {
             onChange={handlePayAmountChange}
           />
           <Typography className="text-sm text-blue-gray-500">
-            {payCurrencyPriceTotal}
+            {priceFormatter.format(payCurrencyPriceTotal)}
           </Typography>
         </div>
 
@@ -159,7 +157,9 @@ const SwapInterface: React.FC<SwapInterfaceProps> = () => {
               fill={true}
             />
           </div>
-          <Typography>{payCurrency}</Typography>
+          <Typography>
+            {payCurrency}
+          </Typography>
           <DropdownIcon id={1} open={0} />
         </Button>
       </div>
@@ -175,7 +175,7 @@ const SwapInterface: React.FC<SwapInterfaceProps> = () => {
             onChange={() => handleReceiveAmountChange}
           />
           <Typography className="text-sm text-blue-gray-500">
-            {receiveCurrencyPriceTotal}
+            {priceFormatter.format(receiveCurrencyPriceTotal)}
           </Typography>
         </div>
 
